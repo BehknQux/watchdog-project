@@ -13,7 +13,7 @@ volatile sig_atomic_t g_timer_fired = 0;
 
 static sigset_t old_mask;
 
-/* handler'lar sadece bayrak set ediyor, baska bir sey yapmiyor (async-signal-safe) */
+/* handlers only set a flag and do nothing else (async-signal-safe) */
 static void on_stop(int sig)
 {
     (void)sig;
@@ -62,7 +62,7 @@ int signals_install(void)
         return -1;
     if (set_handler(SIGUSR1, on_usr1, SA_RESTART) == -1)
         return -1;
-    /* durdurulan (stop) cocuklar icin SIGCHLD gelmesin */
+    /* no SIGCHLD for stopped children */
     if (set_handler(SIGCHLD, on_chld, SA_RESTART | SA_NOCLDSTOP) == -1)
         return -1;
     if (set_handler(SIGALRM, on_alrm, SA_RESTART) == -1)
@@ -88,7 +88,7 @@ int signals_block(void)
     return 0;
 }
 
-/* bayrak kontrolu ile bekleme arasinda sinyal kacmasin diye sigsuspend */
+/* sigsuspend so no signal is lost between checking the flags and waiting */
 void signals_wait(void)
 {
     sigsuspend(&old_mask);
