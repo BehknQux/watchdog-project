@@ -16,8 +16,7 @@ static sigset_t old_mask;
 /* handlers only set a flag and do nothing else (async-signal-safe) */
 static void on_stop(int sig)
 {
-    (void)sig;
-    g_stop_requested = 1;
+    g_stop_requested = sig; /* keep which signal it was for the log */
 }
 
 static void on_usr1(int sig)

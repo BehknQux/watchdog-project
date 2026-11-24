@@ -4,7 +4,7 @@
 #include <signal.h>
 
 /* flags set by the handlers, the real work is done in the main loop */
-extern volatile sig_atomic_t g_stop_requested;   /* SIGINT / SIGTERM */
+extern volatile sig_atomic_t g_stop_requested;   /* 0, or SIGINT / SIGTERM */
 extern volatile sig_atomic_t g_report_requested; /* SIGUSR1 */
 extern volatile sig_atomic_t g_child_exited;     /* SIGCHLD */
 extern volatile sig_atomic_t g_timer_fired;      /* SIGALRM */

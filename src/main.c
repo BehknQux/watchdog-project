@@ -71,6 +71,10 @@ int main(void)
     while (!g_stop_requested) {
         signals_wait();
 
+        /* check shutdown first, so children killed by Ctrl+C are not restarted */
+        if (g_stop_requested)
+            break;
+
         if (g_child_exited) {
             g_child_exited = 0;
             pm_reap();
@@ -92,7 +96,8 @@ int main(void)
     }
 
     if (g_stop_requested)
-        log_event("SIGINT/SIGTERM received");
+        log_event("Received %s, shutting down",
+                  g_stop_requested == SIGINT ? "SIGINT" : "SIGTERM");
 
     graceful_shutdown();
     logger_close();
