@@ -15,7 +15,7 @@
 #define WORKER_COUNT 2
 #ifndef WORKER_PATH
 #define WORKER_PATH "./workers/worker"
-#endif
+#endif 
 
 static struct {
     pid_t pid;
