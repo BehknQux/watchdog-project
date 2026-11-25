@@ -1,35 +1,3 @@
-#define _POSIX_C_SOURCE 200809L
-#include <errno.h>
-#include <signal.h>
-#include <string.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include "process_manager.h"
-#include "signal_manager.h"
-#include "logger.h"
-
-#ifndef MAX_RESTARTS
-#define MAX_RESTARTS 3
-#endif
-#define WORKER_COUNT 2
-#ifndef WORKER_PATH
-#define WORKER_PATH "./workers/worker"
-#endif 
-
-static struct {
-    pid_t pid;
-    int restarts;
-} workers[WORKER_COUNT];
-static int restart_enabled = 1;
-
-static int start_worker(int i)
-{
-    pid_t pid = fork();
-    if (pid == -1) {
-        log_event("Worker %d: fork failed: %s", i + 1, strerror(errno));
-        return -1;
-    }
     if (pid == 0) {
         signals_reset_in_child();
         execl(WORKER_PATH, WORKER_PATH, (char *)NULL);
@@ -145,3 +113,16 @@ int pm_running_count(void)
             ++count;
     return count;
 }
+
+int pm_worker_count(void)
+{
+    return WORKER_COUNT;
+}
+
+int pm_get_worker(int index, int *pid, int *restarts, const char **state)
+{
+    if (index < 0 || index >= WORKER_COUNT ||
+        pid == NULL || restarts == NULL || state == NULL)
+        return -1;
+
+    *pid = (int)workers[index].pid;
