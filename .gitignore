@@ -1,0 +1,8 @@
+# Compiled binaries and generated output
+/watchdog
+/workers/worker
+/tests/logger_smoke
+/logger_smoke.log
+/watchdog.log
+/tests/results/
+*.o
