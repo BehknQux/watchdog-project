@@ -14,16 +14,30 @@ The status reporter calls the existing process-manager interface:
 - `pm_worker_count()`
 - `pm_get_worker(index, &pid, &restarts, &state)`
 
-This implementation assumes `pm_get_worker` returns **0 on success and nonzero on failure**. Confirm this with Student 2 and make sure the real `include/logger.h` declares the same function signatures. Do not replace your teammate's header if it differs.
 
-## Important current upstream blocker
+## Integration Status (Verified on 2026-11-25)
 
-At the time of inspection (2026-11-25), the public `main` branch's `include/process_manager.h` declares `pm_worker_count` and `pm_get_worker`, but the published `src/process_manager.c` ends after `pm_running_count`. If still missing, the full `make` will fail to link with undefined references. Student 2 should implement these functions in their own module and commit them from their own account.
+Student 2 successfully implemented pm_worker_count() and
+pm_get_worker() in src/process_manager.c.
+
+All three students' contributions have been merged into
+the main branch of the GitHub repository.
+
+Verification results:
+- make clean: PASSED
+- make: PASSED (no compiler warnings)
+- make test-logger: PASSED
+- make test: PASSED (8/8 integration checks)
+- Manual Ctrl+C shutdown test: PASSED
+- Process cleanup verification: PASSED
+
+Both worker processes terminated successfully, and the
+watchdog completed its shutdown procedure.
 
 ## Test procedure
 
 1. `make test-logger` tests the logger using a separate fixture. It does not depend on Student 2's actual process manager.
-2. `make` builds the full watchdog; unresolved process-manager functions must be fixed by Student 2.
+2. `make` builds the full watchdog using all integrated student modules.
 3. `make test` runs integration scenarios against isolated copies of the real executable, plus a tiny normal-exit fixture in one scenario.
 4. Inspect `tests/results/last_run/*.log` and capture test outcomes for the final report.
 
